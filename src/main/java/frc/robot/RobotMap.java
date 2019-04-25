@@ -9,6 +9,7 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 
 /**
@@ -47,6 +48,24 @@ public class RobotMap
   public static final int REAR_RIGHT_DRIVE_TALON_ID = 4;
 
   /**
+   * The CAN ID of the left talon controlling the first arm segment
+   */
+  public static final int FIRST_ARM_SEGMENT_LEFT_TALON_ID = 5;
+  /**
+   * The CAN ID of the right talon controlling the first arm segment
+   */
+  public static final int FIRST_ARM_SEGMENT_RIGHT_TALON_ID = 6;
+
+  /**
+   * The CAN ID of the left talon controlling the second arm segment
+   */
+  public static final int SECOND_ARM_SEGMENT_LEFT_TALON_ID = 7;
+  /**
+   * The CAN ID of the right talon controlling the second arm segment
+   */
+  public static final int SECOND_ARM_SEGMENT_RIGHT_TALON_ID = 8;
+
+  /**
    * The front left drive talon object
    */
   public static WPI_TalonSRX frontLeftDriveTalon;
@@ -64,6 +83,9 @@ public class RobotMap
   public static WPI_TalonSRX rearRightDriveTalon;
 
 
+  public static SpeedControllerGroup firstSegmentTalons;
+
+
   /**
    * This is the drivetrain object which handles the input from the controllers to move a mechanum chassis
    */
@@ -75,6 +97,7 @@ public class RobotMap
   public void init()
   {
     setupDrivetrain();
+    setupArm();
   }
 
   /**
@@ -88,5 +111,13 @@ public class RobotMap
     rearRightDriveTalon = new WPI_TalonSRX(REAR_RIGHT_DRIVE_TALON_ID);
 
     drivetrain = new MecanumDrive(frontLeftDriveTalon, rearLeftDriveTalon, frontRightDriveTalon, rearRightDriveTalon);
+  }
+
+  /**
+   * This method instantiates the arm talons and sets their parameters
+   */
+  private void setupArm()
+  {
+
   }
 }
