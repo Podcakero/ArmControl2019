@@ -7,10 +7,13 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.ButtonMonitor;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
+import frc.robot.frc2890classes.USBButton;
 import frc.robot.subsystems.*;
 
 /**
@@ -91,6 +94,31 @@ public class RobotMap
    * The port which the Driver Station reports as connected to the assistant driver controller
    */
   public static final int ASSISTANT_DRIVER_CONTROLLER_PORT = 1;
+
+  /**
+   * The port which the Driver Station reports as connected to the Left Joystick
+   */
+  public static final int FIRST_ARM_SEGMENT_JOYSTICK_PORT = 2;
+  /**
+   * The port which the Driver Station reports as connected to the Centre Joystick
+   */
+  public static final int SECOND_ARM_SEGMENT_JOYSTICK_PORT = 3;
+  /**
+   * The port which the Driver Station reports as connected to the Right Joystick
+   */
+  public static final int WRIST_JOYSTICK_PORT = 4;
+  /**
+   * The port which the Driver Station reports as connected to the Left Small Button
+   */
+  public static final int GIMBAL_LEFT_BUTTON_PORT = 5;
+  /**
+   * The port which the Driver Station reports as conected to the Giant Centre button
+   */
+  public static final int GRABBER_BUTTON_PORT = 6;
+  /**
+   * The port which the Driver Station reports as connected to the Right s=Small button
+   */
+  public static final int GIMBAL_RIGHT_BUTTON_PORT = 7;
 
   /**
    * The Proportional value for the PID Loop <br>
@@ -225,6 +253,31 @@ public class RobotMap
   public static XboxController assistantDriverController;
 
   /**
+   * The dedicated joystick (located on the left) which controls the first arm segment
+   */
+  public static Joystick firstArmSegmentJoystick;
+  /**
+   * The dedicated joystick (located in the centre) which controls the second arm segment
+   */
+  public static Joystick secondArmSegmentJoystick;
+  /**
+   * The dedicated joystick (located on the right) which controls the wrist
+   */
+  public static Joystick wristJoystick;
+  /**
+   * The dedicated button (on the left) which moves the gimbal left
+   */
+  public static USBButton leftGimbalButton;
+  /**
+   * The dedicated button (in the centre) which actuates the grabber
+   */
+  public static USBButton grabberButton;
+  /**
+   * The dedicated button (on the right) which moved the gimbal right
+   */
+  public static USBButton rightGimbalButton;
+
+  /**
    * The subsystem which contains the methods to move the arm
    */
   public static ArmSubsystem armSubsystem;
@@ -258,9 +311,7 @@ public class RobotMap
     setupDrivetrain();
     setupArm();
     initSubsystems();
-
-    driverController = new XboxController(DRIVER_CONTROLLER_PORT);
-    assistantDriverController = new XboxController(ASSISTANT_DRIVER_CONTROLLER_PORT);
+    initContollers();
   }
 
   /**
@@ -301,7 +352,7 @@ public class RobotMap
   /**
    * Instantiates the subsystems
    */
-  public void initSubsystems()
+  private void initSubsystems()
   {
     armSubsystem = new ArmSubsystem();
 
@@ -309,5 +360,21 @@ public class RobotMap
     secondArmSegmentSubsystem = new SecondArmSegmentSubsystem(SECOND_ARM_SEGMENT_P, SECOND_ARM_SEGMENT_I, SECOND_ARM_SEGMENT_D);
     wristSubsystem = new WristSubsystem(WRIST_P, WRIST_I, WRIST_D);
     gimbalSubsystem = new GimbalSubsystem(GIMBAL_P, GIMBAL_I, GIMBAL_D);
+  }
+
+  /**
+   * Instantiates the controllers and buttons
+   */
+  private void initContollers()
+  {
+    driverController = new XboxController(DRIVER_CONTROLLER_PORT);
+    assistantDriverController = new XboxController(ASSISTANT_DRIVER_CONTROLLER_PORT);
+
+    firstArmSegmentJoystick = new Joystick(FIRST_ARM_SEGMENT_JOYSTICK_PORT);
+    secondArmSegmentJoystick = new Joystick(SECOND_ARM_SEGMENT_JOYSTICK_PORT);
+    wristJoystick = new Joystick(WRIST_JOYSTICK_PORT);
+    leftGimbalButton = new USBButton(GIMBAL_LEFT_BUTTON_PORT);
+    grabberButton = new USBButton(GRABBER_BUTTON_PORT);
+    rightGimbalButton = new USBButton(GIMBAL_RIGHT_BUTTON_PORT);
   }
 }
