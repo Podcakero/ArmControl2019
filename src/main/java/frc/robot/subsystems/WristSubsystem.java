@@ -16,7 +16,10 @@ import frc.robot.RobotMap;
 public class WristSubsystem extends PIDSubsystem 
 {
   /**
-   * Add your docs here.
+   * This is the constructor for the wrist subsystem, the PID values should be put in here. 
+   * @param P The proportional gain 
+   * @param I The integral gain
+   * @param D The derivative gain
    */
   public WristSubsystem(double P, double I, double D) 
   {

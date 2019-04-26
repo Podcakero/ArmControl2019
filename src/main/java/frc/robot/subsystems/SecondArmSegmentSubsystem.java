@@ -16,7 +16,10 @@ import frc.robot.RobotMap;
 public class SecondArmSegmentSubsystem extends PIDSubsystem 
 {
   /**
-   * Add your docs here.
+   * This is the constructor for the second arm segment subsystem, the PID values should be put in here. 
+   * @param P The proportional gain 
+   * @param I The integral gain
+   * @param D The derivative gain
    */
   public SecondArmSegmentSubsystem(double P, double I, double D) 
   {

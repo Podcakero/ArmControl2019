@@ -92,18 +92,76 @@ public class RobotMap
    */
   public static final int ASSISTANT_DRIVER_CONTROLLER_PORT = 1;
 
+  /**
+   * The Proportional value for the PID Loop <br>
+   * This is a number which is multiplied by the error (the setpoint - the current value) to determine the speed
+   */
   public static final double FIRST_ARM_SEGMENT_P = 0.0;
+  /**
+   * The Integral value for the PID Loop <br>
+   * This value is the accumulation of the SP (setpoint) - PV (current value) and is added to determine speed
+   */
   public static final double FIRST_ARM_SEGMENT_I = 0.0;
+  /**
+   * The Derivative value for the PID Loop <br>
+   * This value is an estimate for the current trend, based on its RoC (Rate of Change)
+   */
   public static final double FIRST_ARM_SEGMENT_D = 0.0;
+  /**
+   * The Proportional value for the PID Loop <br>
+   * This is a number which is multiplied by the error (the setpoint - the current value) to determine the speed
+   */
   public static final double SECOND_ARM_SEGMENT_P = 0.0;
+  /**
+   * The Integral value for the PID Loop <br>
+   * This value is the accumulation of the SP (setpoint) - PV (current value) and is added to determine speed
+   */
   public static final double SECOND_ARM_SEGMENT_I = 0.0;
+  /**
+   * The Derivative value for the PID Loop <br>
+   * This value is an estimate for the current trend, based on its RoC (Rate of Change)
+   */
   public static final double SECOND_ARM_SEGMENT_D = 0.0;
+  /**
+   * The Proportional value for the PID Loop <br>
+   * This is a number which is multiplied by the error (the setpoint - the current value) to determine the speed
+   */
   public static final double WRIST_P = 0.0;
+  /**
+   * The Integral value for the PID Loop <br>
+   * This value is the accumulation of the SP (setpoint) - PV (current value) and is added to determine speed
+   */
   public static final double WRIST_I = 0.0;
+  /**
+   * The Derivative value for the PID Loop <br>
+   * This value is an estimate for the current trend, based on its RoC (Rate of Change)
+   */
   public static final double WRIST_D = 0.0;
+  /**
+   * The Proportional value for the PID Loop <br>
+   * This is a number which is multiplied by the error (the setpoint - the current value) to determine the speed
+   */
   public static final double GIMBAL_P = 0.0;
+  /**
+   * The Integral value for the PID Loop <br>
+   * This value is the accumulation of the SP (setpoint) - PV (current value) and is added to determine speed
+   */
   public static final double GIMBAL_I = 0.0;
+  /**
+   * The Derivative value for the PID Loop <br>
+   * This value is an estimate for the current trend, based on its RoC (Rate of Change)
+   */
   public static final double GIMBAL_D = 0.0;
+
+  /**
+   * The value which the trigger needs to exceed before we start sending values.
+   */
+  public static final double TRIGGER_DEADBAND = 0.01;
+
+  /**
+   * The speed at which the gimbal will move
+   */
+  public static final double GIMBAL_SPEED = 1.0;
 
   /**
    * The front left drive talon object
@@ -166,11 +224,31 @@ public class RobotMap
    */
   public static XboxController assistantDriverController;
 
+  /**
+   * The subsystem which contains the methods to move the arm
+   */
   public static ArmSubsystem armSubsystem;
+  /**
+   * This subsystem contains the PID Loop to control the first subsystem
+   */
   public static FirstArmSegmentSubsystem firstArmSegmentSubsystem;
+  /**
+   * This subsystem contains the PID Loop to control the second segment
+   */
   public static SecondArmSegmentSubsystem secondArmSegmentSubsystem;
+  /**
+   * This subsystem contains the PID Loop to control the wrist
+   */
   public static WristSubsystem wristSubsystem;
+  /**
+   * This subsystem contains the PID Loop to control the gimbal
+   */
   public static GimbalSubsystem gimbalSubsystem;
+
+  /**
+   * This flag is used to determine which state the grabber is in. True = grabbed, false = release
+   */
+  public static boolean grabberIsGrabbed = true;
 
   /**
    * This is where we instantiate any and all objects, as well as configure specific settings such as PID values and follow modes
@@ -215,6 +293,7 @@ public class RobotMap
 
     grabberSolenoid = new DoubleSolenoid(GRABBER_SOLENOID_FORWARD_PORT, GRABBER_SOLENOID_REVERSE_PORT);
 
+    //Set the secondary motors to follow any commands given to the primary motors
     firstArmSegmentRightTalon.follow(firstArmSegmentLeftTalon);
     secondArmSegmentRightTalon.follow(secondArmSegmentLeftTalon);
   }
@@ -225,7 +304,7 @@ public class RobotMap
   public void initSubsystems()
   {
     armSubsystem = new ArmSubsystem();
-    
+
     firstArmSegmentSubsystem = new FirstArmSegmentSubsystem(FIRST_ARM_SEGMENT_P, FIRST_ARM_SEGMENT_I, FIRST_ARM_SEGMENT_D);
     secondArmSegmentSubsystem = new SecondArmSegmentSubsystem(SECOND_ARM_SEGMENT_P, SECOND_ARM_SEGMENT_I, SECOND_ARM_SEGMENT_D);
     wristSubsystem = new WristSubsystem(WRIST_P, WRIST_I, WRIST_D);
