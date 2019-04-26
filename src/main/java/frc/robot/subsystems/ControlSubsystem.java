@@ -75,6 +75,19 @@ public class ControlSubsystem extends Subsystem
   }
 
   /**
+   * This control mode is meant to be used by inexperienced drivers in a hands-on scenario <br>
+   * The left joystick controls the first arm segment <br>
+   * The centre joystick controls the second arm segment <br>
+   * The right joystick controls the wrist <br>
+   * The small left/right dedicated buttons control the gimbal <br>
+   * The giant centre button controls the Grabber <br>
+   */
+  public static void handsOnDemoModeArmControl()
+  {
+    
+  }
+
+  /**
    * Moves the drivetrain based on the values of joysticks from the driver controller
    */
   public void xboxDrivetrainControl()
