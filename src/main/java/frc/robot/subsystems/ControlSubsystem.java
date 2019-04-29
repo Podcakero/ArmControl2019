@@ -84,7 +84,28 @@ public class ControlSubsystem extends Subsystem
    */
   public static void handsOnDemoModeArmControl()
   {
-    
+    double gimbal = 0.0;
+    if (RobotMap.leftGimbalButton.get())
+      gimbal = RobotMap.GIMBAL_SPEED;
+    else if (RobotMap.rightGimbalButton.get())
+      gimbal = -RobotMap.GIMBAL_SPEED;
+
+    if (RobotMap.grabberButton.getButtonPressed())
+    {
+      if (RobotMap.grabberIsGrabbed)
+        RobotMap.grabberSolenoid.set(Value.kReverse);
+      else
+        RobotMap.grabberSolenoid.set(Value.kForward);
+      
+      //Invert the flag
+      RobotMap.grabberIsGrabbed = !RobotMap.grabberIsGrabbed;
+    }
+
+    RobotMap.armSubsystem.moveArmAtSpeed(
+      RobotMap.firstArmSegmentJoystick.getY(),
+      RobotMap.secondArmSegmentJoystick.getY(),
+      RobotMap.wristJoystick.getY(),
+      gimbal);
   }
 
   /**
