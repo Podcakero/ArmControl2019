@@ -7,6 +7,9 @@
 
 package frc.robot;
 
+import java.io.*;
+
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -23,9 +26,12 @@ import frc.robot.subsystems.ExampleSubsystem;
  * creating this project, you must also update the build.gradle file in the
  * project.
  */
-public class Robot extends TimedRobot {
+public class Robot extends TimedRobot 
+{
   public static ExampleSubsystem m_subsystem = new ExampleSubsystem();
   public static OI m_oi;
+
+  private static FileWriter armpresets;
 
   Command m_autonomousCommand;
   SendableChooser<Command> m_chooser = new SendableChooser<>();
@@ -35,7 +41,8 @@ public class Robot extends TimedRobot {
    * used for any initialization code.
    */
   @Override
-  public void robotInit() {
+  public void robotInit() 
+  {
     m_oi = new OI();
     m_chooser.setDefaultOption("Default Auto", new ExampleCommand());
     // chooser.addOption("My Auto", new MyAutoCommand());
@@ -128,11 +135,65 @@ public class Robot extends TimedRobot {
   }
 
   /**
+   * This function is called the first time test mode uns
+   */
+  @Override
+  public void testInit()
+  {
+    new ControlCommandGroup().start();
+
+    //Create a filenameFilter for the filename "armpresets.txt"
+    FilenameFilter filter = new FilenameFilter()
+    {
+      /**
+       * Accept only the file that meets the given criteria. In this case, only files with names matching "armpresets.txt"
+       * @param arg0 The file path of the file
+       * @param arg1 The filename of the file
+       * @return true if arg1 equals "armpresets.txt"
+       */
+      @Override
+      public boolean accept(File arg0, String arg1) 
+      {
+        return arg1.equalsIgnoreCase("armpresets.txt");
+      }
+    };
+
+    //Try and create a filewriter that appends for the armpresets file. If it doesn't work, print out the exception
+    try 
+    {
+      armpresets = new FileWriter(Filesystem.getDeployDirectory().listFiles(filter)[0], true);  
+    } 
+    catch (IOException e) 
+    {
+      System.out.println(e);
+    }
+  }
+
+  /**
    * This function is called periodically during test mode.
    */
   @Override
   public void testPeriodic() 
   {
-    // Add code for user-defined presets
+    Scheduler.getInstance().run();
+
+    // If the user presses the xbutton while in test mode, save the arms encoder values to the armpresets.txt file
+    if (RobotMap.assistantDriverController.getXButtonPressed())
+    {
+      //Try and add the data from the encoders to the file.
+      try 
+      {
+        //Write the encoder values to the armpresets file in this format:
+        // int1 int2 int3 int4
+        armpresets.write(RobotMap.firstArmSegmentLeftTalon.getSelectedSensorPosition() + " " 
+                        + RobotMap.secondArmSegmentLeftTalon.getSelectedSensorPosition() + " " 
+                        + RobotMap.wristTalon.getSelectedSensorPosition() + " " 
+                        + RobotMap.gimbalTalon.getSelectedSensorPosition() + "\n");
+      }
+      catch (IOException e)
+      {
+        System.out.println(e);
+      }   
+    }
   }
 }

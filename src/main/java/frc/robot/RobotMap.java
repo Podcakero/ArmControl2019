@@ -7,10 +7,15 @@
 
 package frc.robot;
 
+import java.io.File;
+import java.io.FilenameFilter;
+import java.util.*;
+
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.*;
-import edu.wpi.first.wpilibj.drive.MecanumDrive;
+import edu.wpi.first.wpilibj.drive.*;
+import frc.robot.frc2890classes.ArmPositionPreset;
 import frc.robot.frc2890classes.USBButton;
 import frc.robot.subsystems.*;
 
@@ -190,6 +195,11 @@ public class RobotMap
   public static final double GIMBAL_SPEED = 1.0;
 
   /**
+   * This ArrayList contains every user-defined arm position preset
+   */
+  public static ArrayList<ArmPositionPreset> armPresets;
+
+  /**
    * The front left drive talon object
    */
   public static WPI_TalonSRX frontLeftDriveTalon;
@@ -315,6 +325,7 @@ public class RobotMap
     setupArm();
     initSubsystems();
     initContollers();
+    setupPresets();
   }
 
   /**
@@ -381,5 +392,41 @@ public class RobotMap
     leftGimbalButton = new USBButton(GIMBAL_LEFT_BUTTON_PORT);
     grabberButton = new USBButton(GRABBER_BUTTON_PORT);
     rightGimbalButton = new USBButton(GIMBAL_RIGHT_BUTTON_PORT);
+  }
+
+  /**
+   * Grabs and creates presets from the armpresets.txt file on the robot
+   */
+  private static void setupPresets()
+  {
+    //Create a filenameFilter for the filename "armpresets.txt"
+    FilenameFilter filter = new FilenameFilter()
+    {
+      /**
+       * Accept only the file that meets the given criteria. In this case, only files with names matching "armpresets.txt"
+       * @param arg0 The file path of the file
+       * @param arg1 The filename of the file
+       * @return true if arg1 equals "armpresets.txt"
+       */
+      @Override
+      public boolean accept(File arg0, String arg1) 
+      {
+        return arg1.equalsIgnoreCase("armpresets.txt");
+      }
+    };
+
+    //Create a scanner utilising the file name armpresets.txt in the robot code deploy directory. I know it's complicated... but it works
+    Scanner scan = new Scanner(Filesystem.getDeployDirectory().list(filter)[0]);
+
+    //Create new presets from each row of values in the armpresets file.
+    while (scan.hasNextLine())
+    {
+      int arg0 = scan.nextInt();
+      int arg1 = scan.nextInt();
+      int arg2 = scan.nextInt();
+      int arg3 = scan.nextInt();
+      armPresets.add(new ArmPositionPreset(arg0, arg1, arg2, arg3));
+      scan.nextLine();
+    }
   }
 }
