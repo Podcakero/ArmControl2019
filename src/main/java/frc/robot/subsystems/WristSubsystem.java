@@ -24,7 +24,7 @@ public class WristSubsystem extends PIDSubsystem
   public WristSubsystem(double P, double I, double D) 
   {
     // Intert a subsystem name and PID values here
-    super("SubsystemName", P, I, D);
+    super("Wrist Subsystem", P, I, D);
     // Use these to get going:
     // setSetpoint() - Sets where the PID controller should move the system
     // to

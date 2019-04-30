@@ -7,11 +7,9 @@
 
 package frc.robot;
 
-import com.ctre.phoenix.ButtonMonitor;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.*;
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import frc.robot.frc2890classes.USBButton;
 import frc.robot.subsystems.*;
@@ -299,6 +297,11 @@ public class RobotMap
   public static GimbalSubsystem gimbalSubsystem;
 
   /**
+   * This subsystem controls all the control schemes for the robot
+   */
+  public static ControlSubsystem controlSubsystem;
+
+  /**
    * This flag is used to determine which state the grabber is in. True = grabbed, false = release
    */
   public static boolean grabberIsGrabbed = true;
@@ -306,7 +309,7 @@ public class RobotMap
   /**
    * This is where we instantiate any and all objects, as well as configure specific settings such as PID values and follow modes
    */
-  public void init()
+  public static void init()
   {
     setupDrivetrain();
     setupArm();
@@ -317,7 +320,7 @@ public class RobotMap
   /**
    * This method instantiates the drivetrain motors and sets their parameters
    */
-  private void setupDrivetrain()
+  private static void setupDrivetrain()
   {
     frontLeftDriveTalon = new WPI_TalonSRX(FRONT_LEFT_DRIVE_TALON_ID);
     frontRightDriveTalon = new WPI_TalonSRX(FRONT_RIGHT_DRIVE_TALON_ID);
@@ -330,7 +333,7 @@ public class RobotMap
   /**
    * This method instantiates the arm talons and sets their parameters
    */
-  private void setupArm()
+  private static void setupArm()
   {
     firstArmSegmentLeftTalon = new WPI_TalonSRX(FIRST_ARM_SEGMENT_LEFT_TALON_ID);
     firstArmSegmentRightTalon = new WPI_TalonSRX(FIRST_ARM_SEGMENT_RIGHT_TALON_ID);
@@ -352,7 +355,7 @@ public class RobotMap
   /**
    * Instantiates the subsystems
    */
-  private void initSubsystems()
+  private static void initSubsystems()
   {
     armSubsystem = new ArmSubsystem();
 
@@ -360,12 +363,14 @@ public class RobotMap
     secondArmSegmentSubsystem = new SecondArmSegmentSubsystem(SECOND_ARM_SEGMENT_P, SECOND_ARM_SEGMENT_I, SECOND_ARM_SEGMENT_D);
     wristSubsystem = new WristSubsystem(WRIST_P, WRIST_I, WRIST_D);
     gimbalSubsystem = new GimbalSubsystem(GIMBAL_P, GIMBAL_I, GIMBAL_D);
+
+    controlSubsystem = new ControlSubsystem();
   }
 
   /**
    * Instantiates the controllers and buttons
    */
-  private void initContollers()
+  private static void initContollers()
   {
     driverController = new XboxController(DRIVER_CONTROLLER_PORT);
     assistantDriverController = new XboxController(ASSISTANT_DRIVER_CONTROLLER_PORT);

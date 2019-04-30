@@ -25,7 +25,7 @@ public class GimbalSubsystem extends PIDSubsystem
   public GimbalSubsystem(double P, double I, double D) 
   {
     // Intert a subsystem name and PID values here
-    super("SubsystemName", P, I, D);
+    super("Gimbal Subsystem", P, I, D);
     // Use these to get going:
     // setSetpoint() - Sets where the PID controller should move the system
     // to

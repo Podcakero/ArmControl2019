@@ -24,7 +24,7 @@ public class SecondArmSegmentSubsystem extends PIDSubsystem
   public SecondArmSegmentSubsystem(double P, double I, double D) 
   {
     // Intert a subsystem name and PID values here
-    super("SubsystemName", P, I, D);
+    super("Second Arm Segment Subsystem", P, I, D);
     // Use these to get going:
     // setSetpoint() - Sets where the PID controller should move the system
     // to

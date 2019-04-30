@@ -82,7 +82,7 @@ public class ControlSubsystem extends Subsystem
    * The small left/right dedicated buttons control the gimbal <br>
    * The giant centre button controls the Grabber <br>
    */
-  public static void handsOnDemoModeArmControl()
+  public void handsOnDemoModeArmControl()
   {
     double gimbal = 0.0;
     if (RobotMap.leftGimbalButton.get())
