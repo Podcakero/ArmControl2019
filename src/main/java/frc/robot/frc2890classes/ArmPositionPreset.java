@@ -7,12 +7,13 @@
 
 package frc.robot.frc2890classes;
 
+import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.RobotMap;
 
 /**
  * Add your docs here.
  */
-public class ArmPositionPreset 
+public class ArmPositionPreset extends InstantCommand
 {
     private int[] encoderValues = new int[4];
 
@@ -25,6 +26,7 @@ public class ArmPositionPreset
      */
     public ArmPositionPreset(int firstSegment, int secondSegment, int wrist, int gimbal)
     {
+        super();
         encoderValues[0] = firstSegment;
         encoderValues[1] = secondSegment;
         encoderValues[2] = wrist;
@@ -34,7 +36,7 @@ public class ArmPositionPreset
     /**
      * Moves the arm to this preset's position.
      */
-    public void run()
+    public void intitialise()
     {
         RobotMap.armSubsystem.moveArmByEncoderAbsolute(encoderValues[0], encoderValues[1], encoderValues[2], encoderValues[3]);
     }
