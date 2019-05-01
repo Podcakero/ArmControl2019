@@ -11,10 +11,17 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.RobotMap;
 
 /**
- * Add your docs here.
+ * This class holds the encoder values for a specific position for the arm. These can be called to automatically move the arm to a set position
  */
 public class ArmPositionPreset extends InstantCommand
 {
+    /**
+     * This is the array of 4 encoder values corresponding to the: <br>
+     * First segment <br>
+     * Second segment <br>
+     * wrist <br>
+     * gimbal
+     */
     private int[] encoderValues = new int[4];
 
     /**
@@ -24,13 +31,25 @@ public class ArmPositionPreset extends InstantCommand
      * @param wrist The encoder value the wrist should be moved to
      * @param gimbal The encoder value the gimbal should be moved to
      */
-    public ArmPositionPreset(int firstSegment, int secondSegment, int wrist, int gimbal)
+    public ArmPositionPreset(int firstSegment, int secondSegment, int wrist, int gimbal, String name)
     {
-        super();
+        //set the name of this preset
+        super(name);
         encoderValues[0] = firstSegment;
         encoderValues[1] = secondSegment;
         encoderValues[2] = wrist;
         encoderValues[3] = gimbal;
+    }
+
+    /**
+     * Creates a new ArmPositionPreset from an array of encoder values
+     * @param values The array of 4 encoder values corresponding to (in this order)<br>
+     * The first segment, second segment, wrist, gimbal
+     * @param name The name of this preset
+     */
+    public ArmPositionPreset(int[] values, String name)
+    {
+        this(values[0], values[1], values[2], values[3], name);
     }
 
     /**

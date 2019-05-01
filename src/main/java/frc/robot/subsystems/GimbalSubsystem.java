@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.command.PIDSubsystem;
 import frc.robot.RobotMap;
 
 /**
- * Add your docs here.
+ * This subsystem controls the gimbal
  */
 public class GimbalSubsystem extends PIDSubsystem 
 {

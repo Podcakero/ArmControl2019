@@ -84,22 +84,24 @@ public class ControlSubsystem extends Subsystem
    */
   public void handsOnDemoModeArmControl()
   {
-    double gimbal = 0.0;
-    if (RobotMap.leftGimbalButton.get())
-      gimbal = RobotMap.GIMBAL_SPEED;
-    else if (RobotMap.rightGimbalButton.get())
-      gimbal = -RobotMap.GIMBAL_SPEED;
+    //If the left button is pressed, go left. If the right is pressed, go right
+      double gimbal = 0.0;
+      if (RobotMap.leftGimbalButton.get())
+        gimbal = RobotMap.GIMBAL_SPEED;
+      else if (RobotMap.rightGimbalButton.get())
+        gimbal = -RobotMap.GIMBAL_SPEED;
 
-    if (RobotMap.grabberButton.getButtonPressed())
-    {
-      if (RobotMap.grabberIsGrabbed)
-        RobotMap.grabberSolenoid.set(Value.kReverse);
-      else
-        RobotMap.grabberSolenoid.set(Value.kForward);
-      
-      //Invert the flag
-      RobotMap.grabberIsGrabbed = !RobotMap.grabberIsGrabbed;
-    }
+    //if th grabber button is pressed, GRAB BOI
+      if (RobotMap.grabberButton.getButtonPressed())
+      {
+        if (RobotMap.grabberIsGrabbed)
+          RobotMap.grabberSolenoid.set(Value.kReverse);
+        else
+          RobotMap.grabberSolenoid.set(Value.kForward);
+        
+        //Invert the flag
+        RobotMap.grabberIsGrabbed = !RobotMap.grabberIsGrabbed;
+      }
 
     RobotMap.armSubsystem.moveArmAtSpeed(
       RobotMap.firstArmSegmentJoystick.getY(),
@@ -113,11 +115,12 @@ public class ControlSubsystem extends Subsystem
    */
   public void xboxDrivetrainControl()
   {
-    double rotation = 0.0;
-    if (RobotMap.driverController.getTriggerAxis(Hand.kLeft) >= RobotMap.TRIGGER_DEADBAND)
-      rotation = -RobotMap.driverController.getTriggerAxis(Hand.kLeft);
-    else if (RobotMap.driverController.getTriggerAxis(Hand.kRight) >= RobotMap.TRIGGER_DEADBAND)
-      rotation = RobotMap.driverController.getTriggerAxis(Hand.kRight);
+    //Rotation values are grabbed from the triggers of the driver controller. Left rotates left, right rotates right
+      double rotation = 0.0;
+      if (RobotMap.driverController.getTriggerAxis(Hand.kLeft) >= RobotMap.TRIGGER_DEADBAND)
+        rotation = -RobotMap.driverController.getTriggerAxis(Hand.kLeft);
+      else if (RobotMap.driverController.getTriggerAxis(Hand.kRight) >= RobotMap.TRIGGER_DEADBAND)
+        rotation = RobotMap.driverController.getTriggerAxis(Hand.kRight);
 
     RobotMap.drivetrain.driveCartesian(
       RobotMap.driverController.getY(Hand.kRight), 

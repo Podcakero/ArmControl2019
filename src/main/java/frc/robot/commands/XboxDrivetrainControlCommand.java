@@ -29,6 +29,7 @@ public class XboxDrivetrainControlCommand extends Command
   @Override
   protected void execute() 
   {
+    //Repeatedly call the xbox control method
     RobotMap.controlSubsystem.xboxDrivetrainControl();
   }
 

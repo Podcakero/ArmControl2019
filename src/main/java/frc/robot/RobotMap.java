@@ -7,14 +7,16 @@
 
 package frc.robot;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.util.*;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.*;
-import edu.wpi.first.wpilibj.drive.*;
+import edu.wpi.first.wpilibj.drive.MecanumDrive;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import frc.robot.commands.TestPresetsCommand;
 import frc.robot.frc2890classes.ArmPositionPreset;
 import frc.robot.frc2890classes.USBButton;
 import frc.robot.subsystems.*;
@@ -325,7 +327,7 @@ public class RobotMap
     setupArm();
     initSubsystems();
     initContollers();
-    setupPresets();
+    initShuffleboard();
   }
 
   /**
@@ -370,6 +372,7 @@ public class RobotMap
   {
     armSubsystem = new ArmSubsystem();
 
+    //Arm sections
     firstArmSegmentSubsystem = new FirstArmSegmentSubsystem(FIRST_ARM_SEGMENT_P, FIRST_ARM_SEGMENT_I, FIRST_ARM_SEGMENT_D);
     secondArmSegmentSubsystem = new SecondArmSegmentSubsystem(SECOND_ARM_SEGMENT_P, SECOND_ARM_SEGMENT_I, SECOND_ARM_SEGMENT_D);
     wristSubsystem = new WristSubsystem(WRIST_P, WRIST_I, WRIST_D);
@@ -383,9 +386,11 @@ public class RobotMap
    */
   private static void initContollers()
   {
+    //XboxControllers
     driverController = new XboxController(DRIVER_CONTROLLER_PORT);
     assistantDriverController = new XboxController(ASSISTANT_DRIVER_CONTROLLER_PORT);
 
+    //Joysticks/Buttons
     firstArmSegmentJoystick = new Joystick(FIRST_ARM_SEGMENT_JOYSTICK_PORT);
     secondArmSegmentJoystick = new Joystick(SECOND_ARM_SEGMENT_JOYSTICK_PORT);
     wristJoystick = new Joystick(WRIST_JOYSTICK_PORT);
@@ -399,6 +404,9 @@ public class RobotMap
    */
   private static void setupPresets()
   {
+    //Clear the arrayList of arm preset objects
+    armPresets = new ArrayList<ArmPositionPreset>();
+
     //Create a filenameFilter for the filename "armpresets.txt"
     FilenameFilter filter = new FilenameFilter()
     {
@@ -415,18 +423,87 @@ public class RobotMap
       }
     };
 
-    //Create a scanner utilising the file name armpresets.txt in the robot code deploy directory. I know it's complicated... but it works
-    Scanner scan = new Scanner(Filesystem.getDeployDirectory().list(filter)[0]);
-
-    //Create new presets from each row of values in the armpresets file.
-    while (scan.hasNextLine())
+    //If the file named "armpresets.txt" exists
+    if(Filesystem.getDeployDirectory().list(filter) != null && Filesystem.getDeployDirectory().list(filter).length > 0)
     {
-      int arg0 = scan.nextInt();
-      int arg1 = scan.nextInt();
-      int arg2 = scan.nextInt();
-      int arg3 = scan.nextInt();
-      armPresets.add(new ArmPositionPreset(arg0, arg1, arg2, arg3));
-      scan.nextLine();
+      //Try to create a scanner from the armpresets file and read it
+      try 
+      {
+        //Create a scanner utilising the file name armpresets.txt in the robot code deploy directory. I know it's complicated... but it works
+        Scanner scan = new Scanner(Filesystem.getDeployDirectory().listFiles(filter)[0]);
+
+        //Create new presets from each row of values in the armpresets file.
+        while (scan.hasNextLine())
+        {
+          //Scan in the values from the file. They are formatted as such:
+          // int int int int String
+          int firstSegment = scan.nextInt();
+          int secondSegment = scan.nextInt();
+          int wrist = scan.nextInt();
+          int gimbal = scan.nextInt();
+          String name = scan.next();
+
+          //Create a new ArmPositionPreset object and add it to the array list
+          armPresets.add(new ArmPositionPreset(firstSegment, secondSegment, wrist, gimbal, name));
+        }
+        scan.close();
+      }
+      catch (IOException e)
+      {
+        System.out.println(e);
+      }
+    }
+    //Either the file doesn't exist or the directory doesn't exist
+    else
+    {
+      //Try to make the directory, then make the file armpresets.txt
+      try
+      {
+        //Make the directory
+        File dir = new File(Filesystem.getDeployDirectory().toString());
+        dir.mkdir();
+
+        //Make the file
+        File file = new File(dir.getPath() + "//armpresets.txt");
+        file.createNewFile();
+      }
+      catch (IOException e)
+      {
+        System.out.println(e);
+      }
+    }
+  }
+
+  /**
+   * Adds any special objects/values to the shuffleboard at startup
+   */
+  private static void initShuffleboard()
+  {
+    //Update the shuffleboard portion of the armpresets
+    updatePresets();
+    //Add the Test command for testing the adding of presets
+    Shuffleboard.getTab("Testing").add(new TestPresetsCommand());
+  }
+
+  /**
+   * Updates the arm position presets on shuffleboard
+   */
+  public static void updatePresets()
+  {
+    //Clear and re-populate the armpresets arraylist
+    setupPresets();
+
+    for (ArmPositionPreset preset : armPresets)
+    {
+      //Try to add the preset to shuffleboard. If it fails, then it already exists
+      try 
+      {
+        Shuffleboard.getTab("ArmPresets").add(preset);
+      }
+      catch (IllegalArgumentException e)
+      {
+        System.out.println("Preset already added");
+      }
     }
   }
 }

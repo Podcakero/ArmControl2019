@@ -34,6 +34,7 @@ public class ControlCommandGroup extends CommandGroup
     // a CommandGroup containing them would require both the chassis and the
     // arm.
 
+    //Run the drivetrain control and the arm control at the same time
     addParallel(new XboxDrivetrainControlCommand());
     addParallel(new DemoModeArmControlCommand());
   }
