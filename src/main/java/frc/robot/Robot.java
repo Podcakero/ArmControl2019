@@ -163,7 +163,7 @@ public class Robot extends TimedRobot
         armPresetsWriter.write("\n" + RobotMap.firstArmSegmentLeftTalon.getSelectedSensorPosition() + " " 
                         + RobotMap.secondArmSegmentLeftTalon.getSelectedSensorPosition() + " " 
                         + RobotMap.wristTalon.getSelectedSensorPosition() + " " 
-                        + RobotMap.gimbalTalon.getSelectedSensorPosition() + " new preset");
+                        + RobotMap.gimbalTalon.getSelectedSensorPosition() + " newpreset" + RobotMap.armPresets.size());
         //Updates the presets on shuffleboard
         RobotMap.updatePresets();
       }
