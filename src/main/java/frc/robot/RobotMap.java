@@ -356,7 +356,7 @@ public class RobotMap
     wristTalon = new WPI_TalonSRX(WRIST_TALON_ID);
     gimbalTalon = new WPI_TalonSRX(GIMBAL_TALON_ID);
 
-    //Need to add encoders to all talons 
+    //@todo Need to add encoders to all talons 
 
     grabberSolenoid = new DoubleSolenoid(GRABBER_SOLENOID_FORWARD_PORT, GRABBER_SOLENOID_REVERSE_PORT);
 
