@@ -7,13 +7,12 @@
 
 package frc.robot;
 
+import java.io.*;
+
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.commands.ExampleCommand;
-import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.commandgroups.*;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -22,23 +21,22 @@ import frc.robot.subsystems.ExampleSubsystem;
  * creating this project, you must also update the build.gradle file in the
  * project.
  */
-public class Robot extends TimedRobot {
-  public static ExampleSubsystem m_subsystem = new ExampleSubsystem();
-  public static OI m_oi;
-
-  Command m_autonomousCommand;
-  SendableChooser<Command> m_chooser = new SendableChooser<>();
+public class Robot extends TimedRobot 
+{
+  /**
+   * This object writes data to the armpresets.txt file
+   */
+  private static FileWriter armPresetsWriter;
 
   /**
    * This function is run when the robot is first started up and should be
    * used for any initialization code.
    */
   @Override
-  public void robotInit() {
-    m_oi = new OI();
-    m_chooser.setDefaultOption("Default Auto", new ExampleCommand());
-    // chooser.addOption("My Auto", new MyAutoCommand());
-    SmartDashboard.putData("Auto mode", m_chooser);
+  public void robotInit() 
+  {
+    //Initialise all of our stuff OwO
+    RobotMap.init();
   }
 
   /**
@@ -50,7 +48,8 @@ public class Robot extends TimedRobot {
    * LiveWindow and SmartDashboard integrated updating.
    */
   @Override
-  public void robotPeriodic() {
+  public void robotPeriodic() 
+  {
   }
 
   /**
@@ -59,11 +58,13 @@ public class Robot extends TimedRobot {
    * the robot is disabled.
    */
   @Override
-  public void disabledInit() {
+  public void disabledInit() 
+  {
   }
 
   @Override
-  public void disabledPeriodic() {
+  public void disabledPeriodic() 
+  {
     Scheduler.getInstance().run();
   }
 
@@ -79,53 +80,105 @@ public class Robot extends TimedRobot {
    * to the switch structure below with additional strings & commands.
    */
   @Override
-  public void autonomousInit() {
-    m_autonomousCommand = m_chooser.getSelected();
-
-    /*
-     * String autoSelected = SmartDashboard.getString("Auto Selector",
-     * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
-     * = new MyAutoCommand(); break; case "Default Auto": default:
-     * autonomousCommand = new ExampleCommand(); break; }
-     */
-
-    // schedule the autonomous command (example)
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.start();
-    }
+  public void autonomousInit() 
+  {
   }
 
   /**
    * This function is called periodically during autonomous.
    */
   @Override
-  public void autonomousPeriodic() {
+  public void autonomousPeriodic() 
+  {
     Scheduler.getInstance().run();
   }
 
   @Override
-  public void teleopInit() {
-    // This makes sure that the autonomous stops running when
-    // teleop starts running. If you want the autonomous to
-    // continue until interrupted by another command, remove
-    // this line or comment it out.
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
-    }
+  public void teleopInit() 
+  {
+    new ControlCommandGroup().start();
   }
 
   /**
    * This function is called periodically during operator control.
    */
   @Override
-  public void teleopPeriodic() {
+  public void teleopPeriodic() 
+  {
     Scheduler.getInstance().run();
+  }
+
+  /**
+   * This function is called the first time test mode uns
+   */
+  @Override
+  public void testInit()
+  {
+    //Make sure we can move the arm
+    new ControlCommandGroup().start();
+
+    //Create a filenameFilter for the filename "armpresets.txt"
+    FilenameFilter filter = new FilenameFilter()
+    {
+      /**
+       * Accept only the file that meets the given criteria. In this case, only files with names matching "armpresets.txt"
+       * @param arg0 The file path of the file
+       * @param arg1 The filename of the file
+       * @return true if arg1 equals "armpresets.txt"
+       */
+      @Override
+      public boolean accept(File arg0, String arg1) 
+      {
+        return arg1.equalsIgnoreCase("armpresets.txt");
+      }
+    };
+
+    //Try and create a filewriter that appends for the armpresets file. If it doesn't work, print out the exception
+    try 
+    {
+      armPresetsWriter = new FileWriter(Filesystem.getDeployDirectory().listFiles(filter)[0], true);  
+    } 
+    catch (IOException e) 
+    {
+      System.out.println(e);
+    }
   }
 
   /**
    * This function is called periodically during test mode.
    */
   @Override
-  public void testPeriodic() {
+  public void testPeriodic() 
+  {
+    Scheduler.getInstance().run();
+
+    // If the user presses the xbutton while in test mode, save the arms encoder values to the armpresets.txt file
+    if (RobotMap.assistantDriverController.getXButtonPressed())
+    {
+      //Try and add the data from the encoders to the file.
+      try 
+      {
+        //Write the encoder values to the armpresets file in this format:
+        // int1 int2 int3 int4
+        armPresetsWriter.write("\n" + RobotMap.firstArmSegmentLeftTalon.getSelectedSensorPosition() + " " 
+                        + RobotMap.secondArmSegmentLeftTalon.getSelectedSensorPosition() + " " 
+                        + RobotMap.wristTalon.getSelectedSensorPosition() + " " 
+                        + RobotMap.gimbalTalon.getSelectedSensorPosition() + " newpreset" + RobotMap.armPresets.size());
+        //Updates the presets on shuffleboard
+        RobotMap.updatePresets();
+      }
+      catch (IOException e)
+      {
+        System.out.println(e);
+      }   
+    }
+  }
+
+  /**
+   * @return The FileWriter object that correlates to the armpresets.txt file
+   */
+  public static FileWriter getArmPresets()
+  {
+    return armPresetsWriter;
   }
 }
